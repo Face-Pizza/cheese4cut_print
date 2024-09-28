@@ -24,10 +24,24 @@ def print_image(file_path):
 
         # 이미지 불러오기
         bmp = Image.open(file_path)
-        
+
         # 세로로 긴 이미지 회전
         if bmp.size[0] < bmp.size[1]:
-            bmp = bmp.rotate(90)
+            bmp = bmp.rotate(90, expand=True)  # expand=True로 회전 후 전체 크기 유지
+
+        # 이미지와 프린터 크기 비율 계산
+        img_ratio = bmp.size[0] / bmp.size[1]  # 이미지 가로/세로 비율
+        printer_ratio = printer_size[0] / printer_size[1]  # 프린터 가로/세로 비율
+
+        # 비율에 맞춰 출력 크기 계산
+        if img_ratio > printer_ratio:
+            # 이미지가 더 가로로 길 경우, 프린터의 가로 크기에 맞춤
+            new_width = printer_size[0]
+            new_height = int(printer_size[0] / img_ratio)
+        else:
+            # 이미지가 더 세로로 길 경우, 프린터의 세로 크기에 맞춤
+            new_height = printer_size[1]
+            new_width = int(printer_size[1] * img_ratio)
 
         # 프린트 작업 시작
         hDC.StartDoc(file_path)
@@ -35,7 +49,7 @@ def print_image(file_path):
 
         # 이미지를 프린터에 맞게 출력
         dib = ImageWin.Dib(bmp)
-        dib.draw(hDC.GetHandleOutput(), (0, 0, printer_size[0], printer_size[1]))
+        dib.draw(hDC.GetHandleOutput(), (0, 0, new_width, new_height))  # 비율 유지하며 이미지 출력
 
         # 프린트 작업 종료
         hDC.EndPage()
