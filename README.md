@@ -1,5 +1,7 @@
 개발에 필요한 도구  <br/>
 
+python manage.py migrate <br/>
+
 pip install django <br/>
 pip install djangorestframework <br/>
 pip install Pillow  <br/>
